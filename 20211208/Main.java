@@ -1,3 +1,41 @@
+/* 
+  Generies - 입력되는 객체의 자료형을 강제한다.
+
+ ArrayList pitches = new ArrayList();
+
+ pitches 라는 ArrayList에 담을 수 있는 자료형은 String 뿐이라고 강제하는 것.
+ ArrayList<String> pitches = new ArrayList<String>(); 
+ 반드시 String 을 써야 한다고 Generies를 지정. <> 안에 값 지정. 자료형을 강제한다.
+ - 에러 방지, 문제를 원천 봉쇄!
+
+*/
+
+import java.util.ArrayList;
+
+public class Main {
+  public static void main(String[] args) {
+
+  //  ArrayList aList = new ArrayList();
+
+  ArrayList<String> aList = new ArrayList<String>();
+
+    aList.add("hello"); // 글자가 아니라 객체로 들어감. 강제 형 변화시킴
+    aList.add("java");
+
+    // String hello = (String)aList.get(0);
+    // String java = (String)aList.get(1);
+    //Casting 강제 형변환
+
+    String hello = aList.get(0);
+    String java = aList.get(1);
+    // 제네릭스를 사용하여 자료형을 선언하면 그 이후로는 자료형에 대한 형변환 casting이 필요없다. 이미 자바가 aList에는 반드시 String 자료형만 추가된다는 것을 알고 있기 때문. 제네릭스를 사용하면 형변환에 대한 불필요한 코딩과 잘못된 형변환 등의 예외를 방지할 수 있다.
+
+    System.out.println(hello);
+    System.out.println(java);
+
+  }
+}
+
 /* List 리스트
   배열과 비슷한 자료형(여러 개를 담을 수 있다), 크기가 정해지지 않고 동적으로 변한다. 배열은 그 크기가 생성시에 정해지지만 리스트는 그 크기가 정해지지 않아 원하는 만큼 자유롭게 담을 수 있다.
 
@@ -98,8 +136,6 @@
 //     System.out.println(b);
 //   }
 // }
-
-
 
 /*
   Bool (불 Boolean) - true 1(0이 아닌 모든 것), false 0. if 등과 주로 쓰임. 
