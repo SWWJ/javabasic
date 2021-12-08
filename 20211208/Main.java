@@ -5,15 +5,36 @@
 
 */
 
-import java.util.ArrayList;
-// java.util.ArrayList 에 있는 것을 가져와서(import) 사용하겠다
-class Main {
-  public static void main(String[] args) {
+// import java.util.ArrayList;
+// // java.util.ArrayList 에 있는 것을 가져와서(import) 사용하겠다
+// public class Main {
+//   public static void main(String[] args) {
 
-    ArrayList pitches = new ArrayList();
+//     ArrayList pitches = new ArrayList(); // 객체 생성 "new"
 
-  }
-}
+//     pitches.add("123");
+//     pitches.add("234");
+//     pitches.add("789");
+//     pitches.add(0,"133"); // 위치를 지정. 0번째에 "133"을 집어넣는다.
+
+//     System.out.println(pitches.get(2)); // (변수명.get(인덱스 순서))으로 꺼내 쓴다.
+//     // get() 메서드를 이용하여 특정 인덱스 값을 추출
+
+//     System.out.println(pitches.size());
+//     // size()메서드를 이용하여 리스트의 개수를 확인
+
+//     System.out.println(pitches.contains("234"));
+//     //contain() 메서드를 이용하여 해당 값의 포함 여부를 확인
+
+//     System.out.println(pitches.remove("789"));
+//     // remove() 메서드를 이용하여 해당 객체 삭제하고 결과를 리턴
+
+//     System.out.println(pitches.remove(0));
+//     // remove() 메서드를 이용하여 해당 인덱스의 객체를 삭제
+//     // 항목의 ("내용")을 적으면 해당 객체 삭제, (숫자)를 적으면 해당 순서의 객체 삭제
+
+//   }
+// }
 
 
 
@@ -28,7 +49,7 @@ class Main {
   int[] engScore = {80,90,50,60,75}; // 배열 선언하는 방법. 하나로 변수 5개를 해결
   String[] names = {"kim", "park", "son", "lim", "min"};
 
-  int[] 변수명 = {변수값, 변수값 ...};
+  int[] 변수명 = {변수값, 변수값, ...};
 
 */
 
