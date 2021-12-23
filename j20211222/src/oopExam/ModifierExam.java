@@ -1,8 +1,64 @@
 package oopExam;
 
+class Time{
+	private int hour, minute, second; // 변수는 private으로 해서 메서드를 통해서만 변수에 접근할 수 있도록
+	// 모든 멤버 변수의 접근 제어자는 private으로 하여 외부에서는 직접 변수를 조작하지 못하도록 하고 이것을 다루기 위한 메서드은
+	// 모두 public으로 하여 반드시 메서드를 통해서만 변수에 접근하도록 한다. 메서드를 통한 접근만 허용한다.
+	
+	Time(int hour, int minute, int second) {
+		// 생성자에도 접근 제어자를 사용하면 객체 생성을 제한할 수 있다. 보통 생성자의 경우는 클래스의 접근 제어자와 같게 설정하지만
+		// 다르게 설정할 수도 있다.
+		// 생성자의 접근 제어를 통해 객체 생성을 제한하면 객체의 개수를 제한할 수 있다.
+		// 생성자가 private인 클래스는 다른 클래스의 조상이 될 수 없다.
+		// 그 이유는 자식 클래스의 객체를 생성할 때 조상 클래스의 생성자를 호출해야 하는데 생성자가 private이면
+		// 자식 클래스가 호출하는 것이 불가능하기 때문이다.
+		setHour(hour);
+		setMinute(minute);
+		setSecond(second);
+	}
+	
+	public int getHour() {
+		return hour;
+	}
+	
+	public void setHour(int hour) {
+		if(hour < 0 || hour > 23) return;
+		this.hour = hour;
+	}
+	
+	public int getMinute() {
+		return minute;
+	}
+	
+	public void setMinute(int minute) {
+		if(minute < 0 || minute > 59) return;
+		this.minute = minute;
+	}
+	
+	public int getSecond() {
+		return second;
+	}
+	
+	public void setSecond(int second) {
+		if (second < 0 || second > 59) return;
+		this.second = second;
+	}
+}
+
 public class ModifierExam {
 
 	public static void main(String[] args) {
+		
+		Time t = new Time(10, 1, 1);
+		System.out.println(t);
+		
+//		t.hour = 13; // 변수 hour에 직접 접근 불가 -> 접근제어자가 private이므로.
+		t.setHour(t.getHour() + 1);
+
+		System.out.println(t.getHour());
+		System.out.println(t.getMinute());
+		System.out.println(t.getSecond());
+
 /* 접근제어자 public > protected > (default) > private
 	제어자 static final abstract .... 
 
