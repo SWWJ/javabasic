@@ -87,7 +87,7 @@ public class ExceptionExam {
 //			System.out.println(3);
 //			System.out.println(0/0); // 에러 발생 지점
 //			System.out.println(4);   
-////		} catch (ArithmeticException a) {
+////		} catch (ArithmeticException a) { // 더 세부적인 것으로 처리됨
 ////			if(a instanceof ArithmeticException)
 ////				System.out.println("true");
 ////				System.out.println("ArithmeticException");
@@ -148,7 +148,7 @@ public class ExceptionExam {
  * 		에러 error     : 프로그램 코드에 의해 수습될 수 없는 심각한 오류
  * 		예외 exception : 프로그램 코드에 의해 수습될 수 있는 다소 미약한 오류
  * 
- * try - catch ( - final) 구문
+ * try - catch ( - finally) 구문
  * 에러는 어쩔 수 없지만(수습 불가) 예외는 프로그래머가 그에 대한 처리를 미리 해 주어야 한다.
  * 
  * 예외처리 : 프로그램 실행 시 발생할 수 있는 예기치 못한 예외의 발생에 대비한 코드를 작성하는 것을 말하며
@@ -181,7 +181,7 @@ public class ExceptionExam {
  * finally 블럭 - 예외의 발생 여부와 상관없이 어떤 경우에도 실행되는 코드들을 포함시킨다.
  * 				선택적으로 사용 여부를 결정할 수 있다. 필수는 아니다.
  * 
- * 예외 되던지기 ( Exception re-throwing)
+ * 예외 되던지기 (Exception re-throwing)
  * 
  * 한 메서드에 발생 가능한 예외가 여러 개가 있을 경우 몇 개는 메서드 내에서 자체적으로 처리하고 
  * 나머지는 호출부로 던져서 처리하여 양쪽에서 나눠서 처리한다.

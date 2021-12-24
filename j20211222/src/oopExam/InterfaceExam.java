@@ -25,6 +25,7 @@ class Unit {
 }
 
 class Fighter extends Unit implements Fightable { // 동시 상속, 구현. //모두 넣은 인터페이스를 이곳에서 구현
+//	Movable, Attackable을 상속받은 Fighter를 implements함으로써 이곳에서 세 개를 모두 구현하게 함.
 	public void move(int x, int y) {}
 	public void attack(Unit u) {}
 }
@@ -73,7 +74,7 @@ public class InterfaceExam {
 		
 		String getCardKind();
 		// public abstract String gerCardKind();
-		원래는 인처페이스의 모든 메서드는 추상메서드여야만 하는데, 8버전부터 
+		원래는 인터페이스의 모든 메서드는 추상메서드여야만 하는데, 8버전부터 
 		인터페이스에 static 메서드와 default 메서드의 추가를 허용한다.
 		}
 		
@@ -104,7 +105,7 @@ public class InterfaceExam {
 		    다른 팀은 그 목록을 구체화하여 결국 동시에 개발을 진행할 수 있다.
 		    
 		- 표준화가 가능하다.
-		: 인터페이스라는 기본 틀을 사용하여 여러 작업을 진행하게 되면 그 기본 틀에 맞게 개발하여  일관되고 정형화된 개발이 가능하다.
+		: 인터페이스라는 기본 틀을 사용하여 여러 작업을 진행하게 되면 그 기본 틀에 맞게 개발하여 일관되고 정형화된 개발이 가능하다.
 		
 		- 관계 없는 클래스에게 관계를 맺어줄 수 있다.
 		: 서로 상속관계도 아니고 같은 조상 클래스도 가지지 않은 아무 관련 없는 클래스들에게
