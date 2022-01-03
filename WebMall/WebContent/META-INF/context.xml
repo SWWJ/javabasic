@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+<Resource name = "jdbc/webmall"
+auth = "Container"
+type = "javax.sql.DataSource"
+driverClassName = "com.mysql.jdc.Driver"
+url = "jdbc:mysql://local:3306/webmall?serverTimeZone=UTC"
+username = "root"
+password = "0000"
+maxTotal = "16"
+maxIdel = "4"
+maxWaitMillis = "-1"
+/>
+
+</Context>
