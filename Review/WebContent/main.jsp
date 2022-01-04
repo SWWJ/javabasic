@@ -40,13 +40,10 @@ session.setAttribute("id", uid);
 		
 		while(rs.next()) {
 	%>
-	<tr><td colspan = 3><hr></td></tr>
+	<tr><td colspan = 2><hr></td></tr>
 	<tr><td><%=rs.getString("no") %></td>
 	<td><small><%=rs.getString("ts") %></small></td>
-	<form action = "/memo/deletecheck.jsp">
-	<td><button type = "submit">X</button></td></tr>
-	</form>
-	<tr><td colspan = 3><%=rs.getString("memo") %></td></tr>
+	<tr><td colspan = 2><%=rs.getString("memo") %></td></tr>
 	<%
 		}
 	%>
