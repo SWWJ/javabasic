@@ -1,0 +1,899 @@
+sqldb 이름의 데이터베이스 만들기
+
+table
+
+dept
+- deptno 정수
+- dname 문자열 14
+- loc 문자열 13
+
+emp
+- empno 숫자
+- ename 문자열 10
+- job 문자열 10
+- mgr 숫자
+- hiredate 날짜
+- sal 숫자
+- comm 숫자
+- deptno 숫자
+
+salgrade
+- grade 숫자
+- losal 숫자
+- hisal 숫자
+
+Tab 위의 ` 를 사용할 것
+
+
+CREATE DATABASE IF NOT EXISTS `sqldb`;
+USE `sqldb`;
+
+CREATE TABLE `dept` (
+`deptno` int,
+`dname` VARCHAR(14),
+`loc` VARCHAR(13));
+
+사원테이블에서 사원번호 이름 월급 출력
+SELECT empno, ename, sal
+	FROM emp;
+
+사원테이블 모든 열 출력 
+SELECT *
+	FROM emp;
+
+dept 출력, deptno 한 번 더 끝에 출력
+SELECT *, deptno
+	FROM dept;
+
+SELECT CONCAT(ename, '님의 월급은 ', sal, '입니다.') AS 월급
+	FROM emp;
+
+중복 제거하고 job 출력
+
+SELECT DISTINCT job
+	FROM emp;
+
+SELECT A.ename 이름, deptno 부서번호, sal 월급
+	FROM emp A
+	ORDER BY 2 ASC, 3 DESC;
+
+SELECT ename 이름, deptno 부서번호, sal 월급
+	FROM emp 
+	WHERE sal = 3000;
+
+-> 날짜는 이전 이후를 <= / >= 등이 가능하다.
+SELECT ename 이름, deptno 부서번호, sal 월급
+	FROM emp 
+	WHERE hiredate >= '1982-12-22';
+
+SELECT ename 이름, sal 월급
+	FROM emp
+	WHERE sal BETWEEN 1000 AND 3000;
+
+SELECT ename 이름, sal 월급
+	FROM emp
+	WHERE sal > 1000
+	AND sal < 3000;
+
+%와일드 카드, 이 자리에 어떠한 글자가 와도 상관하지 않는다.
+SELECT ename 이름, sal 월급
+	FROM emp
+	WHERE ename LIKE 'S%';
+
+SELECT ename 이름, sal 월급
+	FROM emp
+	WHERE ename LIKE '_M%';
+
+@가 들어가는지 확인
+'%@%'
+
+13 null
+데이터가 할당되지 않은 상태
+알 수 없는 값이기 때문에 = 연산자 사용 불가. IS NULL 사용해야
+0도 아니고 ' ' 도 아닌 값
+
+커미션 null인 사원들만 출력
+SELECT ename, comm
+	FROM emp
+	WHERE comm IS NULL;
+
+oracle에서는 NVL
+mysql에서는 IFNULL
+
+IFNULL(comm,0)
+IFNULL(열이름, 치환값)
+
+IN
+직업이 salesman, analyst, manager인 사람들만  이름 월급 직업 출력
+
+SELECT ename, job, sal
+	FROM emp
+	WHERE job IN ('salesman', 'analyst', 'manager');
+
+SELECT ename, job, sal
+	FROM emp
+	WHERE job = 'salesman'
+	OR job = 'analyst'
+	OR job = 'manager';
+
+함수
+단일행함수 - 하나의 행을 입력받아 하나의 행을 반환
+
+다중행함수 - 여러 개의 행을 입력받아 하나의 행을 반환
+
+SELECT UPPER(ename) 대문자, LOWER(ename) 소문자, INITCAP(ename)첫글자대문자 / 오라클
+	FROM emp;
+
+SELECT UPPER(ename) 대문자, LOWER(ename) 소문자, CONCAT(UPPER(LEFT(ename, 1)), LOWER(SUBSTR(ename, 2))) AS 첫글자대문자
+	FROM emp;
+
+SUBSTRING  Mysql
+SUBSTR         Oracle
+
+# 문자열의 길이 개수
+
+이름을 출력하고 그 이름의 글자의 수를 출력
+SELECT ename 이름, LENGTH(ename) 길이
+	FROM emp;
+
+REPLACE
+특정 철자를 다른 철자로 변경
+SELECT ename 이름, REPLACE(sal, 0, '*')
+	FROM emp;
+
+첫글자마 남기고 나머지를 '*'로 변경
+SELECT REPLACE(ename, SUBSTRING(ename, 2), '*') 보안이름,
+	job 직업,
+	sal * 12 연봉
+	FROM emp;
+
+특정 철자를 N개로 채우기
+
+이름과 월급을 출력하는데 월급을 자리수를 10개로 하고 월급을 출력, 나머지는 *로 채워서 출력
+
+SELECT ename 이름,
+	LPAD(sal, 10, '*') 월급
+	FROM emp;
+
+이름과 월급 출력하는데 월급을 ∎으로 
+SELECT ename 이름, sal 월급, LPAD('∎', ROUND(sal/100), '∎') 그래프
+	FROM emp;
+
+round
+
+반올림 - 기본은 소수점 아래 1자리에서 소수점 위로 반올림
+
+소수점 위의 1의 자리에서 반올림
+SELECT ename 이름, ROUND(sal, -1)
+	FROM emp;
+
+
+TRUNC
+
+SELECT ename 이름, TRUNCATE(sal, -2)
+	FROM emp;
+
+SELECT ename 이름, TRUNCATE(sal, 2)
+	FROM emp;
+
+MOD
+
+홀수/짝수/배수
+
+사원번호가 홀수이면 1, 짝수이면 0 을 출력
+
+사원번호   홀짝
+
+SELECT empno AS 사원번호, MOD(empno, 2)
+	FROM emp;
+
+SELECT empno AS 사원번호, ename 이름
+	FROM emp
+	WHERE MOD(empno, 2) = 1;
+
+사원번호가 2나 6의 배수인가? 
+
+SELECT empno AS 사원번호, ename 이름
+	FROM emp
+	WHERE MOD(empno, 2) = 0
+	OR MOD(empno, 6) = 0;
+
+
+날짜 간 개월 수 차이 출력하기
+
+이름 출력 입사일부터 몇달을 근무했는지?
+
+이름 근무월수
+
+CURDATE()
+TIMESTAMPDIFF(월, 전날짜, 최근날짜)
+
+SELECT hiredate 입사일, CURDATE() 현재일자, TIMESTAMPDIFF(MONTH, hiredate, CURDATE())
+	FROM emp;
+
+SELECT ename 이름,
+	hiredate 입사일,
+	TIMESTAMPDIFF(YEAR, hiredate, CURDATE()) 근무년수,
+
+	TIMESTAMPDIFF(MONTH, hiredate, CURDATE()) 근무월수,
+	TIMESTAMPDIFF(WEEK, hiredate, CURDATE()) 근무주수,
+
+	TIMESTAMPDIFF(DAY, hiredate, CURDATE()) 근무일수
+	FROM emp;
+
+NOW() 현재 날짜와 시간
+CURDATE() 현재 날짜
+
+CREATE TABLE testtb (
+	toy_id INT,
+	toy_name VARCHAR(4),
+	age INT);
+
+INSERT INTO testtb VALUES (1,'우디',25);
+
+INSERT INTO testtb (toy_id, toy_name) VALUES (2,'버즈');
+
+입력 값을 생각하면 NULL 값이 들어가게 된다.
+
+자동 증가 AUTO_INCREMENT
+1부터 증가하는 값을 자동으로 입력해 준다. insert에서는 열을 생략하고 입력한다. 주의할 점은 AUTO_INCREMENT로 지정하는 열은 반드시 PRIMARY KEY로 지정해야만 한다.
+
+CREATE TABLE testtb2 (
+	toy_id INT AUTO_INCREMENT PRIMARY KEY,
+	toy_name VARCHAR(4),
+	age INT);
+
+INSERT INTO testtb2 VALUES(NULL, '영희', 20);
+
+INSERT INTO testtb2 VALUES(NULL, '철수', 22);
+
+SELECT LAST_INSERT_ID();
+자동 증가한 것을 보여줌
+
+ALTER TABLE testtb2 AUTO_INCREMENT=100;
+자동 증가를 100부터 시작
+
+INSERT INTO testtb2 VALUES(NULL, '태지', 24);
+
+SET @@AUTO_INCREMENT_INCREMENT = 3;
+3개씩 증가
+
+테이블의 값을 다른 테이블로 입력하기
+
+SELECT COUNT(*)
+	FROM testtb2;
+
+DESC sqldb.testtb2;
+해당 db의 구조를 살펴볼 수 있다.
+
+SELECT *
+	FROM testtb2 LIMIT 3;
+3개까지만 보여줌
+
+CREATE TABLE testtb3 (NAME VARCHAR(5), age INT);
+
+INSERT INTO testtb3 
+	SELECT toy_name, age FROM testtb2;
+
+testtb2의 toy_name, age를 복사해 옴
+
+UPDATE 데이터 수정
+
+UPDATE sqldb.testtb2
+	SET toy_name = '영희'
+	WHERE toy_name = '서울';
+SELECT * FROM testtb2 WHERE toy_id = 1;
+
+UPDATE sqldb.testtb2
+	SET toy_name = 'SL'
+	WHERE toy_name = '서울';
+SELECT * FROM testtb2 WHERE toy_id = 1;
+
+UPDATE `sqldb`.`testtb2`
+SET `toy_name`='서울'
+WHERE  `toy_id`=1;
+
+UPDATE testtb3
+	SET toy_name = '대구';
+SELECT * FROM testtb3 LIMIT 3;
+
+UPDATE testtb3
+	SET NAME = '대구';
+SELECT * FROM testtb3 LIMIT 3;
+
+
+DELETE
+회원 탈퇴
+
+SYSDATE 오늘 날짜
+SELECT ename, MONTHS_BETWEEN(SYSDATE, hiredate)
+FROM emp;
+
+MONTHS_BETWEEN(최신날짜, 예전날짜)
+
+SELECT TO_DATE('2019-06-01', 'RRRR-MM-DD') - TO_DATE('2018-10-05', 'RRRR-MM-DD')
+    FROM DUAL;
+
+
+~개월 후 날짜
+
+SELECT ADD_MONTHS(TO_DATE('2019-05-01', 'RRRR-MM-DD'), 10)
+    FROM DUAL;
+
+ADD_MONTHS(TO_DATE('2019-05-01','RRRR-MM-DD'),10)
+20/03/01
+
+특정 날짜 뒤에 오는 요일의 날짜
+
+SELECT '2019-05-01' AS 날짜, NEXT_DAY('2019/05/01', 'Monday')
+    FROM DUAL;
+
+해당 날짜 뒤에 오는 월요일의 날짜
+
+날짜	NEXT_DAY('2019/05/01','MONDAY')
+2019-05-01	19/05/06
+
+SELECT SYSDATE AS 날짜, NEXT_DAY(SYSDATE, 'Wednesday')
+    FROM DUAL;
+
+5달 뒤의 수요일
+
+SELECT SYSDATE AS 날짜, NEXT_DAY(ADD_MONTHS(SYSDATE, 5), 'Wednesday')
+    FROM DUAL;
+
+이번 달이 며칠 남았을까?
+LAST_DAY
+
+SELECT LAST_DAY(SYSDATE) - SYSDATE
+    FROM DUAL;
+
+LAST_DAY('2022/02/01') 마지막 날 알려줌
+
+SELECT ename 이름, TO_CHAR(hiredate, 'day') 입사일, sal 월급
+    FROM emp
+    WHERE ename = 'SCOTT';
+
+당일 요일 - day로!
+
+
+TO_CHAR
+숫자형 -> 문자형
+날짜형 -> 문자형
+
+특히 날짜형 문자로 변환하여 년 월 일 요일 등을 추출한다.
+
+SELECT hiredate, TO_CHAR(hiredate, 'RRRR') AS 연도,
+    TO_CHAR(hiredate, 'MM') AS 월,
+    TO_CHAR(hiredate, 'DD') AS 일,
+    TO_CHAR(hiredate, 'DAY') AS 요일
+    
+    FROM emp
+    WHERE ename='SCOTT';
+
+HIREDATE	연도	월	일	요일
+82/12/22  	1982	12	22	WEDNESDAY
+
+SELECT ename 사원명, hiredate 입사일
+    FROM emp
+    WHERE TO_CHAR(hiredate, 'RRRR') = '1981';
+
+SELECT ename 사원명, EXTRACT(YEAR FROM hiredate) 입사년도,
+    EXTRACT(MONTH FROM hiredate) 입사월,
+    EXTRACT(DAY FROM hiredate) 입사날
+    FROM emp
+    WHERE TO_CHAR(hiredate, 'RRRR') = '1981';
+
+EXTRACT(~~ FROM 열이름)
+
+SELECT ename 사원명, TO_CHAR(sal, 'L999,999') 급여
+    FROM emp;
+
+L이 통화 기호, 9는 숫자를 의미
+
+3000 -> $3,000
+
+TO_DATE 함수 
+
+81년 11월 17일에 입사한 사원의 이름과 입사일을 출력
+
+SELECT ename 사원명, hiredate 입사일
+    FROM emp
+    WHERE TO_DATE(hiredate) = TO_DATE('81/11/17', 'RR/MM/DD');
+
+형변환
+
+문자형으로 숫자를 검색했지만 결과가 에러없이 잘 출력됐다. 오라클이 알아서 암묵적으로 형변환을 하기 때문에 에러가 발생하지 않고 출력된다. 문자형을 숫자형으로 자동 변환했다.
+
+
+SELECT ename, sal
+FROM EMP32
+WHERE sal = '3000';
+
+오라클이 숫자로 자동 변환하여 잘 검색한다.
+
+SELECT ename, sal
+FROM EMP32
+WHERE TO_NUMBER(sal) = 3000;
+
+
+NVL, NVL2
+
+SELECT ename, comm, NVL(comm,0)
+FROM emp;
+
+SELECT ename, sal, comm, sal+NVL(comm,0)
+FROM emp;
+
+SELECT ename, sal, comm, NVL2(comm, sal+comm, sal)
+FROM emp;
+
+NVL2 : NULL 아니면 계산하고 NULL이면 0
+
+IF - DECODE
+
+DECODE: IF문을 SQL로 구현하는 방법
+
+SELECT ename 이름, deptno 부서번호, DECODE(deptno, 10, 300, 20, 400, 0) 보너스
+FROM emp;
+
+사원번호, 사원번호가 짝, 홀? 출력
+
+사원번호 비고( 홀수/짝수 )
+
+SELECT empno 사원번호, DECODE(MOD(empno, 2), 1,'홀수', 0, '짝수') 비고
+FROM emp;
+
+직책 salesman 보너스 5000 아니면 모두 2000
+
+이름 직책 보너스
+
+SELECT ename 이름, job 직책, DECODE(job, 'SALESMAN', 5000, 2000) 보너스
+FROM emp;
+
+
+CASE
+
+보너스 지급을 월급이 3000 이상이면 500, 2000이면 300, 1000니면 200, 나머지는 0
+
+SELECT ename 이름, job 직책,
+    CASE WHEN sal >= 3000 THEN 500
+         WHEN sal >= 2000 THEN 300
+         WHEN sal >= 1000 THEN 200
+         ELSE 0
+    END 보너스
+FROM emp;
+
+보너스 커미션이 NULL이면 500 아니면 0
+
+이름 커미션 보너스
+
+SELECT ename 이름, comm 커미션,
+    CASE WHEN comm IS NULL THEN 500
+         ELSE 0
+    END 보너스
+FROM emp;
+
+직책이 SALESMAN, 또는 ANALYST 면 500을 출력, 
+직책이 CLERK, MANAGER면 400을 출력 나머지는 모두 0
+이름 직책 보너스
+
+SELECT ename 이름, job 직책,
+    CASE WHEN job IN ('SALESMAN', 'ANALYST') THEN 500
+         WHEN job IN ('CLERK', 'MANAGER') THEN 400
+         ELSE 0
+    END 보너스
+FROM emp;
+
+# MAX / MIN / AVG / SUM / COUNT
+
+전체 직원 중 제일 높은 급여
+SELECT MAX(sal)
+FROM emp;
+
+직책이 SALESMAN인 직원 중 제일 높은 급여
+SELECT MAX(sal)
+FROM emp
+WHERE job = 'SALESMAN';
+
+SALESMAN 인 사람의 직책과 최고급여
+SELECT job, MAX(sal)
+FROM emp
+WHERE job = 'SALESMAN'
+GROUP BY job;
+
+전체 직책마다 최고 급여
+SELECT job, MAX(sal)
+FROM emp
+GROUP BY job;
+
+직책별 최소 월급을 높은 것부터 출력
+SELECT job 직책, MIN(sal) 최소급여
+FROM emp
+GROUP BY job
+ORDER BY MIN(sal) DESC;
+
+직책별 최소월급을 SALESMAN은 제외하고 최소월급이 높은 것부터 출력
+SELECT job 직책, MIN(sal) 최소급여
+FROM emp
+WHERE job != 'SALESMAN'
+GROUP BY job
+ORDER BY MIN(sal) DESC;
+
+NULL을 제외한 커미션의 평균을 출력하시오
+SELECT ROUND(AVG(NVL(comm,0))) 평균커미션
+FROM emp;
+
+직책별 급여의 합계가 높은 것부터 출력하세요
+SELECT job 직책, SUM(sal) 급여합계
+FROM emp
+GROUP BY job
+ORDER BY SUM(sal) DESC;
+
+
+SELECT job 직책, SUM(sal) 급여합계
+FROM emp
+GROUP BY job
+HAVING SUM(sal) >= 6000;
+
+그룹함수로 조건을 줄 때는 WHERE 대신 HAVING을 사용한다.
+
+SELECT COUNT(*)
+FROM emp;
+
+
+# RANK
+
+직책이 ANALYST, MANAGER인 사원들만 이름 직책 급여를 월급의 순위에 맞춰 내림차순으로 정렬해 출력
+
+SELECT ename 이름, job 직책, sal 급여,
+       RANK() OVER(ORDER BY sal DESC) 급여순위
+FROM emp
+WHERE job IN ('ALALYST', 'MANAGER');
+
+직책별로 월급이 높은 순서대로 순위를 각각 출력하세요
+
+SELECT ename 이름, job 직책, sal 급여,
+       RANK() OVER(PARTITION BY job
+       ORDER BY sal DESC) 급여순위
+FROM emp;
+
+직책이 analyst, manager인 사원들의 이름, 직업, 월급, 월급의 순위를 출력하는데 순위가 1인 사원이 두 명 있을 경우 다음 순위는 2로 출력하게
+
+SELECT ename 이름, job 직책, sal 급여,
+       RANK() OVER(ORDER BY sal DESC) 급여RANK,
+       DENSE_RANK() OVER(ORDER BY sal DESC) 급여DENSE
+FROM emp
+WHERE job IN ('ANALYST', 'MANAGER');
+
+이름	직책		급여	급여RANK	급여DENSE
+FORD	ANALYST		3000	1	 	1
+SCOTT	ANALYST		3000	1		1
+JONES	MANAGER	2975	3		2
+BLAKE	MANAGER	2850	4		3
+CLARK	MANAGER	2450	5		4
+
+81년도에 입사한 사원들의 이름 직책 월급 순위 
+직업별로 높은 순서
+
+SELECT ename 이름, job 직책, sal 급여,
+       DENSE_RANK() OVER(PARTITION BY job
+       ORDER BY sal DESC) 급여DENSE
+FROM emp
+WHERE TO_CHAR(hiredate, 'RRRR') = '1981';
+
+SELECT ename 이름, job 직책, sal 급여,
+       DENSE_RANK() OVER(PARTITION BY job
+       ORDER BY sal DESC) 급여DENSE
+FROM emp
+WHERE hiredate BETWEEN TO_DATE('1981/01/01', 'RRRR/MM/DD')
+                   AND TO_DATE('1981/12/31', 'RRRR/MM/DD');
+
+# NTILE 등급
+
+월급을 4개 등급으로 
+(0~25%
+25~50%
+50~75%
+75~100%) 로 출력
+
+SELECT ename, job, sal,
+       NTILE(4) OVER (ORDER BY sal) 등급
+FROM emp;
+
+# CUME_DIST 비율
+SELECT ename, sal,
+       RANK() OVER (ORDER BY sal DESC) 순위,
+       CUME_DIST() OVER (ORDER BY sal DESC) 비율
+FROM emp;
+
+#LISTAGG 데이터를 가로로 출력
+
+LISTAGG() 함수는 데이터를 가로로 출력하는 함수이다. 구분자를 설정하여 항목을 구분해 출력한다. WITHIN GROUP은 ~내의 라는 의미로 사용된다. GROUP BY 절은 필수로 함께 사용해야 한다. 
+SELECT deptno 부서번호,
+    LISTAGG(ename, ',') WITHIN GROUP (ORDER BY ename) 성명
+FROM emp
+GROUP BY deptno;
+
+직책별 사원의 이름을 가로로 출력, 구분자는 "||"
+
+SELECT job 직책,
+    LISTAGG(ename, ' || ') WITHIN GROUP (ORDER BY ename) 성명
+FROM emp
+GROUP BY job;
+
+# 데이터의 바로 전행과 다음 행 출력
+
+SELECT empno 사원번호, ename 이름, sal 급여,
+    LAG(sal, 1) OVER (ORDER BY sal ASC) "전행",
+    LEAD(sal,1) OVER (ORDER BY sal ASC) "다음행"
+FROM emp;
+
+직업이 ANALYST와 MANAGER인 사원들의 사원번호, 이름, 입사일, 바로 전입사한 사원의 입사일, 바로 다음 입사한 사원의 입사일을 출력
+
+SELECT empno 사원번호, ename 이름, hiredate 입사일,
+    LAG(hiredate, 1) OVER (ORDER BY hiredate ASC) "전행",
+    LEAD(hiredate,1) OVER (ORDER BY hiredate ASC) "다음행"
+FROM emp
+WHERE job IN ('ANALYST', 'MANAGER');
+
+
+# 열을 행으로 출력
+(sum+decode)
+부서번호, 부서번호별 월급의 합계를 출력
+
+
+부서번호	합계
+30	9400
+10	8750
+20	10875
+
+10	20	30
+8750	10875	9400
+
+SELECT SUM(DECODE(deptno, 10, sal)) AS "10",
+       SUM(DECODE(deptno, 20, sal)) AS "20",
+       SUM(DECODE(deptno, 30, sal)) AS "30"
+    FROM emp;
+
+SELECT *
+    FROM (SELECT deptno, sal
+          FROM emp)
+    PIVOT (SUM(sal) FOR deptno IN(10,20,30));
+
+PIVOT은 결과를 뒤집는다
+
+# SUM OVER 누적
+
+SELECT ename, sal, SUM(sal) OVER (
+값 누적 지정
+
+    FROM emp;
+
+ORDER BY sal ROWS
+                                  BETWEEN UNBOUNDED PRECEDING
+                                  AND CURRENT ROW
+
+펏 행부터 현재 행까지의 열의 값 모두 합계
+
+SELECT ename, sal, SUM(sal) OVER (ORDER BY sal ROWS
+                                  BETWEEN UNBOUNDED PRECEDING
+                                  AND CURRENT ROW) 누적값
+    FROM emp;
+
+직책별 월급을 출력, 첫 행에 토탈 월급을 출력
+
+SELECT job 직책, SUM(sal) 합계
+    FROM emp
+    GROUP BY CUBE(job);
+
+CUBE 함수
+
+SELECT deptno 부서번호, job 직책, SUM(sal) 합계
+    FROM emp
+    GROUP BY CUBE(deptno, job);
+
+부서번호, 직책, 부서번호별 토탈 급여와 직책별 토탈 급여, 전체 토탈 값
+
+SELECT deptno 부서번호, job 직책, SUM(sal) 합계
+    FROM emp
+    GROUP BY GROUPING SETS((deptno), (job), ());
+
+부서번호, 직책, 전체
+
+SETS((deptno), (job))
+부서번호 직책
+
+SETS((deptno, job), ())
+부서번호 직책
+
+# 넘버링
+
+SELECT ROW_NUMBER() OVER (ORDER BY empno) 번호, empno 사원번호, ename 이름
+    FROM emp;
+
+출력되는 각 행에 고유한 숫자 값을 부여하는 함수이다. OVER 에 반드시 ORDER BY 를 기술해야만 한다.
+
+부서번호 별로 월급에 대한 순위를 ROW_NUMBER()를 사용하여 구해보자.
+
+
+테이블 조인
+SELECT ename
+	FROM emp;
+
+2개 테이블 조인
+
+SELECT ename, loc
+	FROM emp, dept
+	WHERE emp.deptno = dept.deptno;
+
+
+서로 다른 테이블에 있는 컬럼들을 하나의 결과로 출력하려면 join을 사용해야 한다.
+
+조인을 위해서는 조건이 있어야 한다. 조인 조건이 두 개의 테이블을 연결하기 위한 연결고리이다. 
+
+SELECT e.ename, d.loc, e.job, e.deptno
+	FROM emp e, dept d
+	WHERE e.deptno = d.deptno AND e.job = 'ANALYST';
+
+
+여러 테이블 조인
+
+
+SELECT e.ename, e.sal, s.grade
+	FROM emp e, salgrade s
+	WHERE e.sal BETWEEN s.losal AND s.hisal;
+
+
+SELECT e.ename 사원, e.job 사원직책, m.ename 관리자, m.job 관리자직책
+	FROM emp e, emp m
+	WHERE e.mgr = m.empno;
+
+사원	사원직책		관리자	관리자직책
+BLAKE	MANAGER	KING	PRESIDENT
+CLARK	MANAGER	KING	PRESIDENT
+JONES	MANAGER	KING	PRESIDENT
+MARTIN	SALESMAN	BLAKE	MANAGER
+ALLEN	SALESMAN	BLAKE	MANAGER
+TURNER	SALESMAN	BLAKE	MANAGER
+JAMES	CLERK		BLAKE	MANAGER
+WARD	SALESMAN	BLAKE	MANAGER
+MILLER	CLERK		CLARK	MANAGER
+FORD	ANALYST		JONES	MANAGER
+SCOTT	ANALYST		JONES	MANAGER
+SMITH	CLERK		FORD	ANALYST
+ADAMS	CLERK		SCOTT	ANALYST
+
+SELECT e.ename 이름, e.job 직책, e.sal 급여, d.loc 부서위치
+    FROM emp e JOIN dept d
+    ON (e.deptno = d.deptno);
+
+표준 방식 using
+using에서는 조인 조건 대신에 연결할 때 사용할 컬럼 이름만 기술하면 된다.
+양쪽 테이블에 모두 존재한다는 의미로 [테이블명.열이름]으로 사용하지 않는다.
+
+SELECT e.ename 이름, e.job 직책, e.sal 급여, d.loc 부서위치
+    FROM emp e JOIN dept d
+    USING (deptno);
+
+표준방식 NATURAL JOIN
+
+SELECT e.ename 이름, e.job 직책, e.sal 급여, d.loc 부서위치
+    FROM emp e NATURAL JOIN dept d;
+
+조인 조건을 명시적으로 작성하지 않아도 두 테이블에 둘 다 존재하는 동일한 컬럼을 기반으로 암시적인 조인을 수행한다.
+
+ DEPTNO 컬럼을 오라클이 알아서 찾아서 조인을 수행했다.
+
+LEFT/RIGHT JOIN
+
+RIGHT
+SELECT e.ename 이름, e.job 직책, e.sal 급여, d.loc 부서위치
+    FROM emp e RIGHT OUTER JOIN dept d
+    ON (e.deptno = d.deptno);
+
+emp 와 dept을 조인할 때 오른쪽 dept 테이블의 데이터는 전부 출력된다. 
+
+LEFT 
+
+SELECT e.ename 이름, e.job 직책, e.sal 급여, d.loc 부서위치
+    FROM emp e LEFT OUTER JOIN dept d
+    ON (e.deptno = d.deptno);
+
+emp 테이블의 데이터는 전부 출력되었고 dept 테이블에서만 40이 존재하여 제외하고 출력된다. 
+
+# 위아래로 연결하여 하나의 결과로 출력하는 방법
+1. 컬럼의 개수가 일치해야 한다.
+2. 타입이 동일해야 한다.
+3. ORDER BY 절은 제일 아래쪽 쿼리에만 작성할 수 있다.
+4. 결과로 출력되는 컬럼의 이름은 위쪽 쿼리의 이름으로 출력된다.
+
+SELECT deptno, SUM(sal)
+    FROM emp
+    GROUP BY deptno
+UNION ALL
+SELECT TO_NUMBER(null) AS deptno, SUM(sal)
+    FROM emp;
+
+TO_NUMBER(NULL) 위쪽의 쿼리 유형이 숫자이기 때문에 숫자형으로 동일하게 맞춰주었다. 하지만 NULL로 사용할 때는 자료형이 상관없이 쓸 수 있다.
+
+
+# 교집합 출력
+INTERSECT
+
+위쪽 쿼리인 부서번호 10, 20 사원들에 대한 데이터와 아래쪽 쿼리 부서번호 20, 30 사원들에 대한 데이터 간의 교집합인 20번 데이터를 출력했다.
+
+SELECT ename, sal, job, deptno
+    FROM emp
+    WHERE deptno IN (10, 20)
+    
+INTERSECT
+
+SELECT ename, sal, job, deptno
+    FROM emp
+    WHERE deptno IN (20, 30); 
+
+
+
+단일행 서브쿼리
+
+=, <>, <= =>, <, >
+
+서브쿼리에서 메인쿼리로 하나의 값이 반환
+
+MARTIN 보다 더 많은 월급을 받는 사람들의 이름과 월급을 출력?
+
+SELECT e.ename 이름, e.sal 급여
+    FROM emp e
+    WHERE sal > (
+                    SELECT sal
+                    FROM emp
+                    WHERE ename='MARTIN')
+    ;
+
+
+SCOTT과 같은 월급을 받는 사원들의 이름과 월급을 출력하라
+
+SELECT e.ename 이름, e.sal 급여
+    FROM emp e
+    WHERE sal = (
+                    SELECT sal
+                    FROM emp
+                    WHERE ename='SCOTT')
+    AND ename != 'SCOTT'
+    ;
+
+다중행 서브쿼리
+
+서브쿼리에서 메인쿼리로 여러 개의 값이 반환
+
+IN
+
+NOT IN
+
+ANY
+
+>ALL 가장 큰 값보다 크다.
+>ANY 가장 작은 값보다 크다.
+<ALL 가장 작은 값보다 작다.
+>ANY 가장 큰 값보다 작다.
+
+직책이 SALESMAN인 사원들과 같은 월급을 받는 사람들의 이름과 월급을 출력하자
+
+SELECT e.ename 이름, e.sal 급여
+    FROM emp e
+    WHERE sal IN (
+                    SELECT sal
+                    FROM emp
+                    WHERE job = 'SALESMAN') 
+    ;
+
+ MGR이 NULL이 아닌 사람의 이름과 월급과 직책을 출력하세요.
+
+SELECT e.ename 이름, e.sal 급여, e.job 직책
+    FROM emp e
+    WHERE mgr IN (
+                 SELECT mgr
+                 FROM emp
+                 WHERE mgr IS NOT NULL);
+
+자기 직속 부하가 한 명도 없는 사원은 사원번호가 관리자 번호가 아닌 사원들
