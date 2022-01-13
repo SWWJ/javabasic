@@ -1,0 +1,196 @@
+View 가상의 테이블
+실제 테이블과 아주 유사하지만 실제 데이터는 없는 거울 같은 개념이다.
+
+뷰를 사용하는 이유는 보안(일부만 뽑아서)과 사용사 편의이다.
+- 뷰는 데이터 가공을 통해 마치 테이블처럼 내용을 보여줄 수 있다.
+- 자주 쓰거나 복잡한 SQL 문의 결과를 미리 만들어 놓고 필요시 바로 활용할 수 있다.
+- 여러 테이블을 조인하여 하나의 뷰로 생성할 수 있다.
+- 사용자 별로 접급 권한을 다르게 할 수 있다.
+
+
+뷰의 종류
+1. 심플뷰 - 하나의 테이블에서 뷰를 생성한다.
+2. 컴플렉스뷰 - 여러 개의 테이블을 조인하여 데이터를 생성한다.
+3. 인라인뷰 - SELECT 문의 FROM 절에 기술한 SELECT 문
+
+SELECT A.employee_id, A.hire_date, B.department_name, B.job_title
+FROM employees A, emp_details_view B
+WHERE A.employee_id = B.employee_id
+AND B.department_name = 'Finance'
+;
+
+employees 테이블과 dept 테이블을 사용하여
+
+employee_id
+forst_name
+last_name
+email
+
+dept에서는
+dname
+loc
+이 조회될 수 있도록 e_d_view라는 이름으로 뷰를 생성하세요
+
+CREATE VIEW e_d_view
+AS
+    SELECT A.employee_id, A.first_name, A.last_name, A.email, B.dname, B.loc
+    FROM employees A, dept B;
+
+employees
+first_name 과 last_name을 붙여서 name, hire_date job_id salary
+
+부서번호별 월급의 합계를 출력하고
+월급들 전체의 합계를 제일 아래에 출력
+
+SELECT A.first_name || ' ' || A.last_name AS name, A.job_id, A.salary
+    FROM employees A
+UNION 
+SELECT NULL, job_id, SUM(salary)
+    FROM employees
+    GROUP BY job_id
+UNION
+SELECT NULL, NULL, SUM(salary)
+FROM employees;
+
+
+주문목록 테이블에서 판매가를 정렬하여 출력하시오
+RANK()
+DENSE_RANK()
+ROW_NUMBER()
+
+SELECT item_id, quantity, sales,
+    RANK() OVER (ORDER BY sales DESC) RANK,
+    DENSE_RANK() OVER (ORDER BY sales DESC) D_RANK,
+    ROW_NUMBER() OVER (ORDER BY sales DESC) R_NUM
+    FROM order_info;
+
+
+SELECT item_id, product_name, price,
+    RANK() OVER (ORDER BY price DESC) RANK,
+    DENSE_RANK() OVER (ORDER BY price DESC) D_RANK,
+    ROW_NUMBER() OVER (ORDER BY price DESC) R_NUM
+    FROM item;
+
+
+시나리오
+도서관 데이터베이스를 구축하려고 한다.
+요구사항을 분석해서 필요한 엔터티(entity 테이블)로 테이블을 만들고 속성(테이블의 열)을 설정하시오
+
+요구사항
+엔터티의 개수는 3개 ,
+각 엔터티에는 속성을 3개 이상 설정하시오
+
+도서정보, 회원정보, 사원정보
+엔터티 이름 : 도서정보
+엔터티 속성 : 도서번호, 도서명, 권수CHECK(quantity > 0), 저자명, 출판사명, 빌려간 회원 아이디
+
+엔터티 이름 : 회원정보
+엔터티 속성 : 회원수, 회원명, 사용 도서관명, 전화번호, 회원 아이디
+
+엔터티 이름 : 사원정보
+엔터티 속성 : 사원아이디, 이름, 성별, 직책 
+
+엔터티 이름 : 빌린 책 (bor_book)
+엔터티 속성 : 빌린 날, 반납예정날짜(DATE_ADD(기준 날짜, 7)->DATE_ADD(NOW()/SYSDATE, 7)), 빌린 도서번호, 빌린 회원 아이디, 빌려준 사원 아이디
+
+제약조건 5개 이상 적용
+제약 조건 확인 (무결성 검증)
+키가 100 이하인 사람은 안 들어가게 
+
+테이블 한 개에 예시 데이터를 2개만 입력
+테이블 간의 관계 설정
+제약조건을 목록으로 만들어 캡쳐
+
+1. 제약조건이름, 적용한 테이블/필드, 적용코드
+
+1. NOT NULL : book_info의 quantity
+`quantity` INT NOT NULL
+
+2. CHECK : EMP 테이블의 GENDER
+ALTER TABLE `emp`  ADD CONSTRAINT CHECK (`gender` IN ('남','녀'));
+
+3. FOREIGN KEY, member 테이블의 mem_id와 book_info의 mem_id
+ALTER TABLE `lib`.`member` 
+ADD CONSTRAINT `FK_bm_memid` FOREIGN KEY (`mem_id`) REFERENCES `lib`.`book_info` (`mem_id`);
+
+ERD 제출
+
+E01N1.jpg    erd
+E01N2.jpg    제약조건 목록
+E01N3.jpg    무결성 검증 1 (check)
+E01sql.sql    전체 코드
+
+압축 파일 : 16test3주성원.zip
+폴더명 E01  
+
+austiny@korea.ac.kr
+
+
+
+FOREIGN KEY(`mem_id`) REFERENCES book_info(`mem_id`)
+
+CREATE DATABASE `lib`;
+
+CREATE TABLE `book_info` (
+`book_id` CHAR(6) NOT NULL PRIMARY KEY,
+`book_name` VARCHAR(50) NOT NULL,
+`quantity` INT NOT NULL,
+`mem_id` CHAR(6)
+);
+
+CREATE TABLE `member` (
+`no` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+`mem_name` CHAR(8) NOT NULL,
+`mem_id` CHAR(6) NOT NULL,
+`loc` CHAR(4),
+`phone` CHAR(11)
+);
+
+CREATE TABLE `emp` (
+`eid` CHAR(6) NOT NULL PRIMARY KEY,
+`ename` CHAR(5) NOT NULL,
+`gender` CHAR(2) NOT NULL,
+`job` CHAR(8)
+);
+
+ALTER TABLE `emp` 
+ ADD CONSTRAINT
+CHECK (`gender` IN ('남','녀'));
+
+ALTER TABLE `lib`.`member` 
+ADD CONSTRAINT `FK_bm_memid`
+  FOREIGN KEY (`mem_id`)
+  REFERENCES `lib`.`book_info` (`mem_id`);
+
+INSERT INTO `lib`.`book_info` (`book_id`, `book_name`, `quantity`) VALUES ('714', '불편한 편의점', '2');
+INSERT INTO `lib`.`book_info` (`book_id`, `book_name`, `quantity`) VALUES ('756', '달러구트 백화점', '4');
+
+
+
+제약조건목록	테이블		필드		코드
+PRIMARY KEY	member		mem_id		`mem_id` CHAR(8) NOT NULL PRIMARY KEY
+NOT NULL	member		mname		`mname` CHAR(5) NOT NULL
+CHECK		member		gender		ALTER TABLE `member` ADD CONSTRAINT CHECK(`gender` IN ('M','F'));
+FOREIGN KEY	order		prod_id		ALTER TABLE `order` ADD CONSTRAINT 
+						FOREIGN KEY(`prod_id`) REFERENCES `product`(`prod_id`)
+DEFAULT		member		add		ALTER TABLE `member` ALTER COLUMN `add` SET DEFAULT '서울'
+
+
+
+
+엔터티명 : 회원정보
+엔터티의 속성들 : 회원 아이디, 이름, 성별(CHECK!), 주소(2자리), 전화번호
+제약조건 : 회원 아이디 PRIMARY KEY, 전화번호를 제외한 모두 NOT NULL, 성별은 CHECK('M','F')
+
+엔터티명 : 주문정보
+엔터티의 속성들 : 주문 아이디, 주문회원 아이디, 주문 제품, 주문개수, 주문날짜
+제약조건 : 주문 아이디 PRIMARY KEY, 주문회원 아이디는 회원정보의 회원 아이디와 외래키 관계, 주문 제품 역시 제품 아이디와 외래키 관계
+
+엔터티명 : 제품정보
+엔터티의 속성들 : 제품 아이디, 제품명, 브랜드
+제약조건 : 제품 아이디, 제품명은 NOT NULL, 제품 아이디는 PRIMARY KEY
+
+
+INSERT INTO `shopping`.`member` (`mem_id`, `mname`, `gender`, `add`, `tel`) VALUES ('123', '김가은', 'F', '서울', '02');
+INSERT INTO `shopping`.`member` (`mem_id`, `mname`, `gender`, `add`, `tel`) VALUES ('124', '주성원', 'M', '서울', '02');
+INSERT INTO `shopping`.`member` (`mem_id`, `mname`, `gender`, `add`, `tel`) VALUES ('125', '홍길동', 'M', '부산', '00');

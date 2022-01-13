@@ -1291,7 +1291,7 @@ CREATE TABLE member (
 	amount          INT NOT NULL
 );
 
-ChECK 제약 조건 - 입력할 때 데이터를 점검하는 기능, 어떤 열에 특정값이 들어 가지 않도록 하거나 '남/여' 둘 중의 하나만 입력되도록 할 수 있다.
+CHECK 제약 조건 - 입력할 때 데이터를 점검하는 기능, 어떤 열에 특정값이 들어 가지 않도록 하거나 '남/여' 둘 중의 하나만 입력되도록 할 수 있다.
 
 CREATE TABLE member (
 	product_name CHAR(4) PRIMARY KEY,
@@ -1441,3 +1441,11 @@ UPDATE v_viewtest1
 DELETE
 	FROM v_viewtest1
 	WHERE `Member ID` = 'APN';
+
+제약조건
+UNIQUE 중복 불가능하게 제약
+FOREIGN FEY 다른 테이블과 연결해서 사용할 수 있게 만듦
+PRIMARY KEY 대표, 중복 불가, NULL 값 허용 x
+CHECK 입력할 때 특정값으로만 입력할 수 있도록
+NOT NULL / NULL을 허용하지 않음
+DEFAULT 입력할 때 DEFAULT라고 선언하면 그 값이 자동으로 들어감
