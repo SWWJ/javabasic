@@ -1,0 +1,20 @@
+<%@ page import = "java.sql.*" %>
+
+<%@ page import = "DbConnClose.*"%>
+
+<%
+Connection conn = null;
+PreparedStatement pstmt = null;
+ResultSet rset = null;
+
+conn = DbConnClose.gerConnection();
+
+%>
+
+
+<%
+// ResultSet, PreparedStatement, Connection 사용 경우
+DbConnClose.resourceClose(rset, pstmt, conn);
+
+// PreparedStatement, Connection 사용 경우
+DbConnClose.resourceClose(pstmt,conn);
